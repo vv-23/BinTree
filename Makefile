@@ -1,5 +1,5 @@
 CC=x86_64-w64-mingw32-g++
-CXXFLAGS= -g #-static -static-libgcc -static-libstdc++
+CXXFLAGS= -g -static -static-libgcc -static-libstdc++
 
 
 submitdir = $(notdir $(CURDIR))
@@ -19,7 +19,6 @@ $(objects): $(objdir)/%.o: $(src)/%.cpp
 submit:
 	mkdir $(submitdir)
 	cp -r $(src)/ $(submitdir)/
-	cp input.txt $(submitdir)/
 	cp $(builddir)/$(exe) $(submitdir)/
 	zip -r $(submitdir).zip $(submitdir)/
 clean:

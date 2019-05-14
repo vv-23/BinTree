@@ -1,3 +1,14 @@
+/**--------------------------------------------------------
+
+	@file main.cpp
+	@author Vi Vuong
+	@version 13.37
+
+	CS-260-01 - Assignment 5
+	Program entry point. Tests StringBinTree class
+
+--------------------------------------------------------*/
+
 #include <iostream>
 #include "Node.h"
 #include "BinTree.h"

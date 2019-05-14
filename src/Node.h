@@ -1,3 +1,14 @@
+/**--------------------------------------------------------
+
+    @file Node.h
+    @author Vi Vuong
+    @version 13.37
+
+    CS-260-01 - Assignment 5
+    Binary tree node template
+
+--------------------------------------------------------*/
+
 #pragma once
 #include <memory>
 
