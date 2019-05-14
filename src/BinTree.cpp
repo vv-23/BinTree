@@ -15,6 +15,10 @@ StringBinTree::StringBinTree() {
     root = nullptr;
 };
 
+StringBinTree::StringBinTree(NodePtr<std::string> rootPtr): root(rootPtr) {
+
+}
+
 
 bool StringBinTree::remove(const std::string & data) {
 	NodePtr<std::string> current = root;
@@ -114,17 +118,25 @@ void StringBinTree::print(std::ostream& stream, NodePtr<std::string> current, in
     }
 };
 
-std::shared_ptr<StringBinTree> StringBinTree::copy() const {
-	return nullptr;
+StringBinTree StringBinTree::copy() const {
+	StringBinTree r(copyNode(root.get()));
+	return r;
 }
 
-NodePtr<std::string> StringBinTree::copyNode(const Node<std::string>* node) {
+NodePtr<std::string> StringBinTree::copyNode(const Node<std::string>* const node) const {
+	/*
+		node is a const pointer to const Node<std::string>* meaning that
+		-node can't point to sth else
+		-the object node points to can't be changed
+		Raw pointer is used instead of a smart pointer since this pointer is just an "observer" and doesn't share the node objects' ownership
+		with the smart pointers in the tree
+	*/
 	if (node==nullptr) return nullptr;
 	else {
 		NodePtr<std::string> newNode = std::make_shared<Node<std::string>>();
 		newNode->data = node->data;
-		newNode->leftChild = copyNode(node->leftChild);
-		newNode->rightChild = copyNode(node->rightChild);
+		newNode->leftChild = copyNode(node->leftChild.get());
+		newNode->rightChild = copyNode(node->rightChild.get());
 		return newNode;
 	}
 }

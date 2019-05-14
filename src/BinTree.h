@@ -28,6 +28,13 @@ public:
     StringBinTree();
 
 	/**
+
+		\brief Class constructor that takes a pointer to root
+
+	*/
+	StringBinTree(NodePtr<std::string> rootPtr);
+
+	/**
 	
 		\brief Insert a node into the tree. No duplicates allowed
 		\param data Node data 
@@ -50,11 +57,11 @@ public:
 	*/
 	bool remove(const std::string& data);
 
-	std::shared_ptr<StringBinTree> copy() const;
+	StringBinTree copy() const;
 private:
     bool insert(const NodePtr<std::string>& newNode, NodePtr<std::string>& current);
     void print(std::ostream& stream, NodePtr<std::string> current, int level);
 	void removeNode(NodePtr<std::string>& node);
-	NodePtr<std::string> copyNode(const Node<std::string>* node);
+	NodePtr<std::string> copyNode(const Node<std::string>* node) const;
     NodePtr<std::string> root;
 };
