@@ -13,11 +13,13 @@
 #include "Node.h"
 #include <string>
 #include <ostream>
+#include <iostream>
 
 //Note: Since the class' destruction involves nested shared_ptr destruction, very large trees might cause stack overflow
 //Since the class uses smart pointers to handle its nodes' memory allocation and deallocation, default destructor is good enough
 
 //TODO: Convert this class to a template one.
+//TODO: Find a way to use unique_ptr
 class StringBinTree {
 public:
 	/**
@@ -47,7 +49,22 @@ public:
 		\brief Print the tree (inorder)
 		\param stream Destination ostream 
 	*/
-    void print(std::ostream& stream);
+    void printInorder();
+
+	/**
+	
+		\brief Print the tree (postorder)
+		\param stream Destination ostream 
+	*/
+    void printPostorder();
+
+	/**
+	
+		\brief Print the tree (Preorder)
+		\param stream Destination ostream 
+	*/
+    void printPreorder();
+
 
 	/**
 	
@@ -56,12 +73,54 @@ public:
 		\return Sucessful or not 	
 	*/
 	bool remove(const std::string& data);
+	
+	/**
+	
+		\brief Remove all nodes from the tree	
+	*/
+	void removeAll();
 
 	StringBinTree copy() const;
+
+	/**
+	
+		\brief Traverse the tree (inorder) and operate on the data
+		\param func_ptr A pointer to a function that takes in a string reference and an integer (node level)
+	*/
+	void inOrder(void (*func_ptr)(std::string& s, int level));
+
+	/**
+	
+		\brief Traverse the tree (postorder) and operate on the data
+		\param func_ptr A pointer to a function that takes in a string reference and an integer (node level)
+	*/
+	void postOrder(void (*func_ptr)(std::string& s, int level));
+
+	/**
+	
+		\brief Traverse the tree (preorder) and operate on the data
+		\param func_ptr A pointer to a function that takes in a string reference and an integer (node level)
+	*/
+	void preOrder(void (*func_ptr)(std::string& s, int level));
+
 private:
+	void print(std::string& s, int level);
+
     bool insert(const NodePtr<std::string>& newNode, NodePtr<std::string>& current);
-    void print(std::ostream& stream, NodePtr<std::string> current, int level);
 	void removeNode(NodePtr<std::string>& node);
+
+	void inOrder(void (StringBinTree::*func_ptr)(std::string& s, int level));
+	void postOrder(void (StringBinTree::*func_ptr)(std::string& s, int level));
+	void preOrder(void (StringBinTree::*func_ptr)(std::string& s, int level));
+
+	void inOrder(NodePtr<std::string> current, void (*func_ptr)(std::string& s, int level), int currentLevel);
+	void postOrder(NodePtr<std::string> current, void (*func_ptr)(std::string& s, int level), int currentLevel);
+	void preOrder(NodePtr<std::string> current, void (*func_ptr)(std::string& s, int level), int currentLevel);
+
+	void inOrder(NodePtr<std::string> current, void (StringBinTree::*func_ptr)(std::string& s, int level), int currentLevel);
+	void postOrder(NodePtr<std::string> current, void (StringBinTree::*func_ptr)(std::string& s, int level), int currentLevel);
+	void preOrder(NodePtr<std::string> current, void (StringBinTree::*func_ptr)(std::string& s, int level), int currentLevel);
+
 	NodePtr<std::string> copyNode(const Node<std::string>* node) const;
     NodePtr<std::string> root;
 };

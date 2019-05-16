@@ -86,6 +86,14 @@ void StringBinTree::removeNode(NodePtr<std::string>& node) {
 	}
 }
 
+void StringBinTree::removeAll() {
+	/*
+		Reset root, decreasing ref count by 1. If root object isn't owned anywhere else (it shouldn't be) it will be destroyed. Since each node also 
+		have 2 child nodes, this will result in nested shared_ptr destruction.
+	*/
+	root.reset();
+}
+
 bool StringBinTree::insert(const NodePtr<std::string>& newNode, NodePtr<std::string>& current) {
     if (current==nullptr) {
         current = newNode;
@@ -105,18 +113,21 @@ bool StringBinTree::insert(const std::string& data) {
 }
 
 
-void StringBinTree::print(std::ostream& stream) {
-    print(stream, root,0);
+void StringBinTree::printInorder() {
+    inOrder(print);
 };
 
-void StringBinTree::print(std::ostream& stream, NodePtr<std::string> current, int level) {
-    if (current==nullptr) return;
-    else {
-        print(stream, current->leftChild, level+1);
-        stream << current->data << "(" << level << ") ";
-        print(stream, current->rightChild, level+1);
-    }
+void StringBinTree::printPostorder() {
+    postOrder(print);
 };
+
+void StringBinTree::printPreorder() {
+    preOrder(print);
+};
+
+void StringBinTree::print(std::string& s, int level) {
+	std::cout << s << " (" << level << ") ";
+}
 
 StringBinTree StringBinTree::copy() const {
 	StringBinTree r(copyNode(root.get()));
@@ -140,3 +151,100 @@ NodePtr<std::string> StringBinTree::copyNode(const Node<std::string>* const node
 		return newNode;
 	}
 }
+
+
+
+
+
+//----------------General func pointer block------------------------------------------------------
+//Inorder traverse
+void StringBinTree::inOrder(NodePtr<std::string> current, void (*func_ptr)(std::string& s, int level), int currentLevel) {
+	if (current==nullptr) return;
+	else {
+		inOrder(current->leftChild, func_ptr, currentLevel+1);
+		(*func_ptr)(current->data,currentLevel);
+		inOrder(current->rightChild, func_ptr, currentLevel+1);
+	}
+}
+
+void StringBinTree::inOrder(void (*func_ptr)(std::string& s, int level)) {
+	inOrder(root, func_ptr, 0);
+}
+
+//Postorder traverse
+
+void StringBinTree::postOrder(NodePtr<std::string> current, void (*func_ptr)(std::string& s, int level), int currentLevel) {
+	if (current==nullptr) return;
+	else {
+		postOrder(current->leftChild, func_ptr, currentLevel+1);
+		postOrder(current->rightChild, func_ptr, currentLevel+1);
+		(*func_ptr)(current->data,currentLevel);
+	}
+}
+
+void StringBinTree::postOrder(void (*func_ptr)(std::string& s, int level)) {
+	postOrder(root, func_ptr, 0);
+}
+
+//Preorder traverse
+
+void StringBinTree::preOrder(NodePtr<std::string> current, void (*func_ptr)(std::string& s, int level), int currentLevel) {
+	if (current==nullptr) return;
+	else {
+		(*func_ptr)(current->data,currentLevel);
+		preOrder(current->leftChild, func_ptr, currentLevel+1);
+		preOrder(current->rightChild, func_ptr, currentLevel+1);
+	}
+}
+
+void StringBinTree::preOrder(void (*func_ptr)(std::string& s, int level)) {
+	preOrder(root, func_ptr, 0);
+}
+
+//------------------------------------------------------------------------------------
+
+
+//----------------Member func pointer block------------------------------------------------------
+//https://docs.microsoft.com/en-us/cpp/cpp/pointer-to-member-operators-dot-star-and-star?view=vs-2019
+//No clue how it works, but it does
+//Basically changed *func_ptr from General func pointer block to this->*func_ptr
+void StringBinTree::inOrder(NodePtr<std::string> current, void (StringBinTree::*func_ptr)(std::string& s, int level), int currentLevel) {
+	if (current==nullptr) return;
+	else {
+		inOrder(current->leftChild, func_ptr, currentLevel+1);
+		(this->*func_ptr)(current->data,currentLevel);
+		inOrder(current->rightChild, func_ptr, currentLevel+1);
+	}
+}
+
+void StringBinTree::inOrder(void (StringBinTree::*func_ptr)(std::string& s, int level)) {
+	inOrder(root, func_ptr, 0);
+}
+
+void StringBinTree::postOrder(NodePtr<std::string> current, void (StringBinTree::*func_ptr)(std::string& s, int level), int currentLevel) {
+	if (current==nullptr) return;
+	else {
+		postOrder(current->leftChild, func_ptr, currentLevel+1);
+		postOrder(current->rightChild, func_ptr, currentLevel+1);
+		(this->*func_ptr)(current->data,currentLevel);
+	}
+}
+
+void StringBinTree::postOrder(void (StringBinTree::*func_ptr)(std::string& s, int level)) {
+	postOrder(root, func_ptr, 0);
+}
+
+void StringBinTree::preOrder(NodePtr<std::string> current, void (StringBinTree::*func_ptr)(std::string& s, int level), int currentLevel) {
+	if (current==nullptr) return;
+	else {
+		(this->*func_ptr)(current->data,currentLevel);
+		preOrder(current->leftChild, func_ptr, currentLevel+1);
+		preOrder(current->rightChild, func_ptr, currentLevel+1);
+	}
+}
+
+void StringBinTree::preOrder(void (StringBinTree::*func_ptr)(std::string& s, int level)) {
+	preOrder(root, func_ptr, 0);
+}
+
+//---------------------------------------------------------------------------------------------------------
